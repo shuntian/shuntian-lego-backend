@@ -9,13 +9,19 @@ const userCreateRules = {
 
 class UserController extends Controller {
 
-  async createByEmail() {
-    const { ctx, service, app } = this;
-    const { username } = ctx.request.body;
+  validateUserInput() {
+    const { ctx, app } = this;
     const errors = app.validator.validate(userCreateRules, ctx.request.body);
+    return errors;
+  }
+
+  async createByEmail() {
+    const { ctx, service } = this;
+    const errors = this.validateUserInput();
     if (errors) {
       return ctx.helper.error({ ctx, errorType: 'userValidateFail', error: errors });
     }
+    const { username } = ctx.request.body;
     const user = await service.user.findByUsername(username);
     if (user) {
       return ctx.helper.error({ ctx, errorType: 'createUserAlreadyExists' });
@@ -32,6 +38,10 @@ class UserController extends Controller {
 
   async loginByEmail() {
     const { ctx, service } = this;
+    const errors = this.validateUserInput();
+    if (errors) {
+      return ctx.helper.error({ ctx, errorType: 'userValidateFail', error: errors });
+    }
     const { username, password } = ctx.request.body;
     const user = await service.user.findByUsername(username);
     if (!user) {
