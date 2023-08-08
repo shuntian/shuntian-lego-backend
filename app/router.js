@@ -11,6 +11,6 @@ module.exports = app => {
 
   router.post('/users/create', controller.user.createByEmail);
   router.get('/users/:id', controller.user.show);
-  // router.get('/user/get-user-info', controller.user.show);
+  router.post('/users/loginByEmail', controller.user.loginByEmail);
 
 };

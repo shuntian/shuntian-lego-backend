@@ -2,12 +2,20 @@
 
 const { Controller } = require('egg');
 
+const userCreateRules = {
+  username: 'email',
+  password: { type: 'password', min: 8 },
+};
+
 class UserController extends Controller {
 
   async createByEmail() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     const { username } = ctx.request.body;
-
+    const errors = app.validator.validate(userCreateRules, ctx.request.body);
+    if (errors) {
+      return ctx.helper.error({ ctx, errorType: 'userValidateFail', error: errors });
+    }
     const user = await service.user.findByUsername(username);
     if (user) {
       return ctx.helper.error({ ctx, errorType: 'createUserAlreadyExists' });
@@ -24,11 +32,17 @@ class UserController extends Controller {
 
   async loginByEmail() {
     const { ctx, service } = this;
-    const { username } = ctx.request.body;
+    const { username, password } = ctx.request.body;
     const user = await service.user.findByUsername(username);
     if (!user) {
       return ctx.helper.error({ ctx, errorType: 'loginCheckFailInfo' });
     }
+
+    const verifyPwd = await ctx.compare(password, user.password);
+    if (!verifyPwd) {
+      return ctx.helper.error({ ctx, errorType: 'loginCheckFailInfo' });
+    }
+
     ctx.helper.success({ ctx, res: user });
   }
 

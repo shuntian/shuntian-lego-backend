@@ -3,11 +3,13 @@ const Service = require('egg').Service;
 class UserService extends Service {
 
   async createByEmail(payload) {
-    const { app } = this;
+    const { ctx, app } = this;
     const { username, password } = payload;
+    const hash = await ctx.genHash(password);
     return app.model.User.create({
       username,
-      password,
+      password: hash,
+      email: username,
     });
   }
 
