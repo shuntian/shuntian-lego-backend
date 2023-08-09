@@ -16,7 +16,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1691020294104_261';
 
   // add your middleware config here
-  config.middleware = [];
+  config.middleware = [ 'customError' ];
 
   config.security = {
     csrf: {
@@ -31,12 +31,13 @@ module.exports = appInfo => {
     },
   };
 
+  config.jwt = {
+    secret: '12345678',
+  };
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-    jwt: {
-      secret: '12345678',
-    },
   };
 
   return {

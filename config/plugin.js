@@ -18,4 +18,8 @@ module.exports = {
     enable: true,
     package: 'egg-bcrypt',
   },
+  jwt: {
+    enable: true,
+    package: 'egg-jwt',
+  },
 };

@@ -1,7 +1,6 @@
 'use strict';
 
 const { Controller } = require('egg');
-const { sign } = require('jsonwebtoken');
 
 const userCreateRules = {
   username: 'email',
@@ -33,7 +32,8 @@ class UserController extends Controller {
 
   async show() {
     const { ctx, service } = this;
-    const userData = await service.user.findByUsername(ctx.state.user.username);
+    const { username } = ctx.state.user;
+    const userData = await service.user.findByUsername(username);
     ctx.helper.success({ ctx, res: userData, message: '登陆成功' });
   }
 
@@ -54,7 +54,8 @@ class UserController extends Controller {
       return ctx.helper.error({ ctx, errorType: 'loginCheckFailInfo' });
     }
 
-    const token = sign({ username: user.username }, app.config.secret, { expiresIn: 60 * 60 });
+    const { secret } = app.config.jwt;
+    const token = app.jwt.sign({ username: user.username }, secret, { expiresIn: 60 * 60 });
     ctx.helper.success({ ctx, res: { token } });
   }
 
