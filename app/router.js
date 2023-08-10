@@ -14,5 +14,7 @@ module.exports = app => {
   router.post('/users/create', controller.user.createByEmail);
   router.get('/users/:id', jwt, controller.user.show);
   router.post('/users/loginByEmail', controller.user.loginByEmail);
+  router.post('/users/sendVeriCode', controller.user.sendVeriCode);
+  router.post('/users/loginByPhoneNumber', controller.user.loginByPhoneNumber);
 
 };

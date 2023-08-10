@@ -23,6 +23,20 @@ class UserService extends Service {
     return app.model.User.findOne({ username });
   }
 
+  async findByPhoneNumber(phoneNumber) {
+    const { app } = this;
+    return app.model.User.findOne({ phoneNumber });
+  }
+
+  async createByPhoneNumber(phoneNumber) {
+    const { app } = this;
+    return app.model.User.create({
+      phoneNumber,
+      username: `lego-${phoneNumber.slice(-4)}`,
+      type: 'phone',
+    });
+  }
+
 }
 
 module.exports = UserService;
