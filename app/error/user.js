@@ -27,9 +27,9 @@ const userErrorMessages = {
     errno: 101007,
     message: '验证码发送失败',
   },
-  giteeOauthError: {
+  githubOauthError: {
     errno: 101008,
-    message: 'gitee 授权失败',
+    message: 'github 授权失败',
   },
 };
 

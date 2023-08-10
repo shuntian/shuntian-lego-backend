@@ -2,6 +2,10 @@
 
 'use strict';
 
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
@@ -44,9 +48,19 @@ module.exports = appInfo => {
     secret: '12345678',
   };
 
+  const githubOauthConfig = {
+    cid: process.env.GITHUB_CLIENT_CID,
+    secret: process.env.GITHUB_CLIENT_SECRETS,
+    authURL: process.env.GITHUB_AUTHORIZE_URL,
+    redirectURL: process.env.GITHUB_REDIRECT_URL,
+    accessTokenURL: process.env.GITHUB_ACCESS_TOKEN_URL,
+    githubUserAPI: process.env.GITHUB_USER_INFO_URL,
+  };
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+    githubOauthConfig,
   };
 
   return {

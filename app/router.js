@@ -16,5 +16,6 @@ module.exports = app => {
   router.post('/users/loginByEmail', controller.user.loginByEmail);
   router.post('/users/sendVeriCode', controller.user.sendVeriCode);
   router.post('/users/loginByPhoneNumber', controller.user.loginByPhoneNumber);
-
+  router.get('/users/passport/github', controller.user.oauth);
+  router.get('/users/passport/github/callback', controller.user.oauthByGithub);
 };

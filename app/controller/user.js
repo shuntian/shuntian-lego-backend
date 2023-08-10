@@ -103,6 +103,24 @@ class UserController extends Controller {
     return ctx.helper.success({ ctx, res: { token }, message: '登陆成功' });
   }
 
+  async oauth() {
+    const { app, ctx } = this;
+    const { cid, authURL } = app.config.githubOauthConfig;
+    const oauthUrl = `${authURL}?scope=user:email&client_id=${cid}`;
+    ctx.redirect(oauthUrl);
+  }
+
+  async oauthByGithub() {
+    const { ctx, service } = this;
+    const { code } = ctx.request.query;
+    try {
+      const token = await service.user.loginByGithub(code);
+      return ctx.helper.success({ ctx, res: { token } });
+    } catch (e) {
+      return ctx.helper.error({ ctx, errorType: 'githubOauthError' });
+    }
+  }
+
 }
 
 module.exports = UserController;
