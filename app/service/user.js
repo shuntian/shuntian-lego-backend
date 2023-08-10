@@ -23,18 +23,23 @@ class UserService extends Service {
     return app.model.User.findOne({ username });
   }
 
-  async findByPhoneNumber(phoneNumber) {
+  async loginByCellPhone(phoneNumber) {
     const { app } = this;
-    return app.model.User.findOne({ phoneNumber });
-  }
-
-  async createByPhoneNumber(phoneNumber) {
-    const { app } = this;
-    return app.model.User.create({
+    const user = await this.findByUsername(phoneNumber);
+    if (user) {
+      const token = app.jwt.sign({ username: user.username }, app.config.jwt.secret, { expiresIn: 60 * 60 });
+      return token;
+    }
+    const userData = {
       phoneNumber,
-      username: `lego-${phoneNumber.slice(-4)}`,
-      type: 'phone',
-    });
+      username: phoneNumber,
+      nickName: `lego-${phoneNumber.slice(-4)}`,
+      type: 'cellPhone',
+    };
+
+    const newUser = await app.model.User.create(userData);
+    const token = app.jwt.sign({ username: newUser.username }, app.config.jwt.secret, { expiresIn: 60 * 60 });
+    return token;
   }
 
 }

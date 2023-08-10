@@ -97,15 +97,10 @@ class UserController extends Controller {
     const preVeriCode = await app.redis.get(key);
 
     if (veriCode !== preVeriCode) {
-      return ctx.helper.error({ ctx, errorType: 'userValidateFail', error: errors });
+      return ctx.helper.error({ ctx, errorType: 'loginVeriCodeIncorrectFailInfo', error: errors });
     }
-
-    let userData = await service.user.findByPhoneNumber(cellPhone);
-    if (!userData) {
-      userData = await service.user.createByPhoneNumber(cellPhone);
-    }
-
-    return ctx.helper.success({ ctx, res: { user: userData }, message: '登陆成功' });
+    const token = await service.user.loginByCellPhone(cellPhone);
+    return ctx.helper.success({ ctx, res: { token }, message: '登陆成功' });
   }
 
 }
