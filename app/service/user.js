@@ -27,7 +27,10 @@ class UserService extends Service {
     const { app } = this;
     const user = await this.findByUsername(phoneNumber);
     if (user) {
-      const token = app.jwt.sign({ username: user.username }, app.config.jwt.secret, { expiresIn: 60 * 60 });
+      const token = app.jwt.sign({
+        username: user.username,
+        _id: user._id,
+      }, app.config.jwt.secret, { expiresIn: 60 * 60 });
       return token;
     }
     const userData = {
@@ -38,7 +41,10 @@ class UserService extends Service {
     };
 
     const newUser = await app.model.User.create(userData);
-    const token = app.jwt.sign({ username: newUser.username }, app.config.jwt.secret, { expiresIn: 60 * 60 });
+    const token = app.jwt.sign({
+      username: newUser.username,
+      _id: newUser._id,
+    }, app.config.jwt.secret, { expiresIn: 60 * 60 });
     return token;
   }
 
@@ -82,7 +88,10 @@ class UserService extends Service {
     const username = `github_${userMessage.id}}`;
     const user = await this.findByUsername(username);
     if (user) {
-      const token = app.jwt.sign({ username: user.username }, app.config.jwt.secret, { expiresIn: 60 * 60 });
+      const token = app.jwt.sign({
+        username: user.username,
+        _id: user._id,
+      }, app.config.jwt.secret, { expiresIn: 60 * 60 });
       return token;
     }
 
@@ -96,7 +105,10 @@ class UserService extends Service {
       type: 'oauth',
     };
     const newUser = await app.model.User.create(userData);
-    const token = app.jwt.sign({ username: newUser.username }, app.config.jwt.secret, { expiresIn: 60 * 60 });
+    const token = app.jwt.sign({
+      username: newUser.username,
+      _id: newUser._id,
+    }, app.config.jwt.secret, { expiresIn: 60 * 60 });
     return token;
   }
 

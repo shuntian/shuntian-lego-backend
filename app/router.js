@@ -18,4 +18,7 @@ module.exports = app => {
   router.post('/users/loginByPhoneNumber', controller.user.loginByPhoneNumber);
   router.get('/users/passport/github', controller.user.oauth);
   router.get('/users/passport/github/callback', controller.user.oauthByGithub);
+
+  // work
+  router.post('/works/create', jwt, controller.work.createWork);
 };

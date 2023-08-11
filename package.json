@@ -17,7 +17,8 @@
     "egg-validate": "2.0.2",
     "jsonwebtoken": "9.0.1",
     "mongoose": "6.11.2",
-    "mongoose-sequence": "5.3.1"
+    "mongoose-sequence": "5.3.1",
+    "nanoid": "3.0.0"
   },
   "devDependencies": {
     "egg-bin": "^5",

@@ -60,7 +60,10 @@ class UserController extends Controller {
     }
 
     const { secret } = app.config.jwt;
-    const token = app.jwt.sign({ username: user.username }, secret, { expiresIn: 60 * 60 });
+    const token = app.jwt.sign({
+      username: user.username,
+      _id: user._id,
+    }, secret, { expiresIn: 60 * 60 });
     ctx.helper.success({ ctx, res: { token } });
   }
 
