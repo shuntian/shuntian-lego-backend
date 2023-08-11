@@ -18,7 +18,7 @@ module.exports = app => {
     status: { type: Number, default: 1 },
     channels: { type: Array },
     latestPublishAt: { type: Date },
-    user: { type: Schema.Types.ObjectId, ref: 'user' },
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
   }, { timestamps: true });
 
   WorkSchema.plugin(AutoIncrement, { inc_field: 'id', id: 'works_id_counter' });

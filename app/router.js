@@ -21,4 +21,8 @@ module.exports = app => {
 
   // work
   router.post('/works/create', jwt, controller.work.createWork);
+  router.post('/works/myWorks', jwt, controller.work.myWoks);
+  router.post('/works/templates', jwt, controller.work.templateList);
+  router.patch('/works/:id', jwt, controller.work.updateWork);
+  router.delete('/works/:id', jwt, controller.work.deleteWork);
 };
