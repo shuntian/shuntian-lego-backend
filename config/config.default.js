@@ -2,6 +2,7 @@
 
 'use strict';
 
+const path = require('path');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -46,6 +47,18 @@ module.exports = appInfo => {
 
   config.jwt = {
     secret: '12345678',
+  };
+
+  // config.multipart = {
+  //   mode: 'file',
+  //   tmpdir: path.join(appInfo.baseDir, 'uploads'),
+  // };
+
+  config.static = {
+    dir: [
+      { prefix: '/public', dir: path.join(appInfo.baseDir, '/app/public') },
+      { prefix: '/uploads', dir: path.join(appInfo.baseDir, '/uploads') },
+    ],
   };
 
   const githubOauthConfig = {
