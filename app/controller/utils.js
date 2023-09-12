@@ -41,6 +41,7 @@ class UtilsController extends Controller {
     const target = createWriteStream(savedFilePath);
     const target2 = createWriteStream(savedThumbnailFilePath);
     const savePromise = pipeline(stream, target);
+
     const transform = sharp().resize({ width: 300 });
     const saveThumbnailPromise = pipeline(stream, transform, target2);
 
