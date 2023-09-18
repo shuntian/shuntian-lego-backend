@@ -64,6 +64,15 @@ module.exports = appInfo => {
     ],
   };
 
+  config.oss = {
+    client: {
+      accessKeyId: process.env.ALC_ACCESS_KEY || '',
+      accessKeySecret: process.env.ALC_SECRET_KEY || '',
+      bucket: 'shuntian-lego',
+      endpoint: 'oss-cn-beijing.aliyuncs.com',
+    },
+  };
+
   const githubOauthConfig = {
     cid: process.env.GITHUB_CLIENT_CID,
     secret: process.env.GITHUB_CLIENT_SECRETS,

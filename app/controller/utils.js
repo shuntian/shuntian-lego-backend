@@ -1,12 +1,52 @@
 const { Controller } = require('egg');
 const sharp = require('sharp');
 const path = require('path');
+const sendToWormhole = require('stream-wormhole');
 const { nanoid } = require('nanoid');
-const { extname } = require('path');
+const { extname, join } = require('path');
 const { createWriteStream } = require('fs');
 const { pipeline } = require('stream/promises');
 
 class UtilsController extends Controller {
+
+  async uploadToOSS() {
+    const { ctx } = this;
+    const stream = await ctx.getFileStream();
+    // shuntian-lego /imooc-test/**.ext
+    const saveOssPath = join('imooc-test', nanoid(6) + extname(stream.filename));
+
+    try {
+      const result = await ctx.oss.put(saveOssPath, stream);
+      const { name, url } = result;
+      ctx.helper.success({ ctx, res: { name, url } });
+    } catch (e) {
+      await sendToWormhole(stream);
+      ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
+    }
+
+  }
+
+  async uploadMultipart() {
+    const { ctx } = this;
+    const parts = ctx.multipart();
+    const urls = [];
+    let part = null;
+    while ((part = await parts())) {
+      if (Array.isArray(part)) continue;
+      try {
+        const saveOssPath = join('imooc-test', nanoid(6) + extname(part.filename));
+        const result = await ctx.oss.put(saveOssPath, part);
+        const { url } = result;
+        urls.push(url);
+      } catch (e) {
+        console.log(e);
+        await sendToWormhole(part);
+        ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
+        return;
+      }
+    }
+    ctx.helper.success({ ctx, res: { urls } });
+  }
 
   async fileLocalUpload() {
     const { ctx, app } = this;
