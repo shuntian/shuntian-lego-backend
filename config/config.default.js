@@ -27,6 +27,7 @@ module.exports = appInfo => {
     csrf: {
       enable: false,
     },
+    domainWhiteList: [ 'http://127.0.0.1:8080' ],
   };
 
   config.redis = {
@@ -86,6 +87,7 @@ module.exports = appInfo => {
   const userConfig = {
     // myAppName: 'egg',
     githubOauthConfig,
+    jwtExpires: '1h',
   };
 
   return {
