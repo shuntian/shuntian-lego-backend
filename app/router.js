@@ -22,7 +22,7 @@ module.exports = app => {
   // work
   router.post('/works/create', jwt, controller.work.createWork);
   router.get('/works/myWorks', jwt, controller.work.myWoks);
-  router.get('/works/templates', jwt, controller.work.templateList);
+  router.get('/works/templates', controller.work.templateList);
   router.patch('/works/:id', jwt, controller.work.updateWork);
   router.delete('/works/:id', jwt, controller.work.deleteWork);
 

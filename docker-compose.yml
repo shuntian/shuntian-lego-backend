@@ -1,0 +1,20 @@
+version: '3'
+services:
+  lego-mongo:
+    image: mongo:latest
+    container_name: lego-mongo
+    volumes:
+      - /Users/shuntian/workspace/shanshui-lego-backend/.docker-volumes/mongo/data:/data/db'
+    ports:
+      - 27017:27017
+    privileged: true
+  lego-backend:
+    depends_on:
+      - lego-mongo
+    build:
+      context: . # 当前目录
+      dockerfile: Dockerfile
+    image: lego-backend
+    container_name: lego-backend
+    ports: 
+      - 7001:7001

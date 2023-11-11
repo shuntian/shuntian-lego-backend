@@ -30,22 +30,20 @@ module.exports = appInfo => {
     domainWhiteList: [ 'http://127.0.0.1:8080' ],
   };
 
-  config.redis = {
-    client: {
-      port: 6379,
-      host: '127.0.0.1',
-      password: '',
-      db: 0,
-    },
-  };
+  // config.redis = {
+  //   client: {
+  //     port: 6379,
+  //     host: '127.0.0.1',
+  //     password: '',
+  //     db: 0,
+  //   },
+  // };
 
   config.mongoose = {
-    client: {
-      url: 'mongodb://127.0.0.1:27017/lego',
-      options: {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      },
+    url: 'mongodb://127.0.0.1:27017/lego',
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     },
   };
 
