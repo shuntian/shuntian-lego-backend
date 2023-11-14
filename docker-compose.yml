@@ -4,10 +4,13 @@ services:
     image: mongo:latest
     container_name: lego-mongo
     volumes:
-      - /Users/shuntian/workspace/shanshui-lego-backend/.docker-volumes/mongo/data:/data/db'
+      - '/Users/shuntian/workspace/shanshui-lego-backend/.docker-volumes/mongo/data:/data/db'
+      - '$PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/'
     ports:
       - 27017:27017
     privileged: true
+    env_file:
+      - .env
   lego-backend:
     depends_on:
       - lego-mongo
@@ -18,3 +21,5 @@ services:
     container_name: lego-backend
     ports: 
       - 7001:7001
+    env_file:
+      - .env

@@ -23,6 +23,9 @@ module.exports = () => {
   config.mongoose = {
     url: 'mongodb://lego-mongo:27017/lego',
     options: {
+      user: process.env.MONGO_DB_USERNAME,
+      pass: process.env.MONGO_DB_PASSWORD,
+      authSource: 'lego',
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },
