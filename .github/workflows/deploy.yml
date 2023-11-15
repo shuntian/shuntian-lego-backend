@@ -1,0 +1,39 @@
+name: Deploy app to server
+on: [push]
+jobs:
+  deploy-and-restart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'create env file'
+        run: |
+          touch .env
+          echo ALC_ACCESS_KEY=${{ secrets.ALC_ACCESS_KEY }} >> .env
+          echo ALC_ACCESS_KEY=${{ secrets.ALC_SECRET_KEY }} >> .env
+          echo GITHUB_CLIENT_CID=${{ secrets.GIT_CLIENT_CID }} >> .env
+          echo GITHUB_CLIENT_SECRET=${{ secrets.GIT_CLIENT_SECRETS }} >> .env
+          echo GITHUB_AUTHORIZE_URL=${{ secrets.GIT_AUTHORIZE_URL }} >> .env
+          echo GITHUB_REDIRECT_URL=${{ secrets.GIT_REDIRECT_URL }} >> .env
+          echo GITHUB_ACCESS_TOKEN_URL=${{ secrets.GIT_ACCESS_TOKEN_URL }} >> .env
+          echo GITHUB_USER_INFO_URL=${{ secrets.GIT_USER_INFO_URL }} >> .env
+          echo MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} >> .env
+          echo MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} >> .env
+          echo MONGO_DB_USERNAME=${{ secrets.MONGO_DB_USERNAME }} >> .env
+          echo MONGO_DB_PASSWORD=${{ secrets.MONGO_DB_PASSWORD }} >> .env
+          echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> .env
+      # 拷贝必须的文件到一个文件夹, 包含 .env docker-compose-inline.yml, mongo-entrypoint
+      - name: 'copy necessary files into one folder'
+        run: |
+          mkdir lego-backend
+          cp .env docker-compose-online.yml lego-backend
+          cp -r mongo-entrypoint lego-backend
+          ls -a lego-backend
+      # 通过 scp 复制内容到 服务器
+      - name: 'copy lego-backend folder via scp'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secret.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: 'lego-backend'
+          target: '~'
