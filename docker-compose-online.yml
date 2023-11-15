@@ -1,0 +1,35 @@
+version: '3'
+services:
+  lego-mongo:
+    image: mongo:latest
+    container_name: lego-mongo
+    volumes:
+      - '/Users/shuntian/workspace/shanshui-lego-backend/.docker-volumes/mongo/data:/data/db'
+      - '$PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/'
+    ports:
+      - 27018:27017
+    privileged: true
+    env_file:
+      - .env
+  lego-redis:
+    image: redis:6.2.6
+    container_name: lego-redis
+    command: >
+      --requirepass ${REDIS_PASSWORD}
+    ports:
+      - 6378:6379
+    env_file:
+      - .env
+  lego-backend:
+    depends_on:
+      - lego-mongo
+      - lego-redis
+    build:
+      context: . # 当前目录
+      dockerfile: Dockerfile
+    image: registry.cn-beijing.aliyuncs.com/shuntian/lego:0.0.1
+    container_name: lego-backend-online
+    ports: 
+      - 7002:7001
+    env_file:
+      - .env
