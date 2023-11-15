@@ -4,11 +4,11 @@ set -e
 mongosh << EOF
 use admin
 db.createUser({
-  user: '$MONGO_INITDB_ROOT_USERNAMEE',
-  pwd: '$MONGO_INITTDB_ROOT_PASSWORD',
+  user: '$MONGO_INITDB_ROOT_USERNAME',
+  pwd: '$MONGO_INITDB_ROOT_PASSWORD',
   roles: [{ role: 'userAdminAnyDatabase', db: 'admin' }],
 })
-db.auth('$MONGO_INITDB_ROOT_USERNAMEE', '$MONGO_INITTDB_ROOT_PASSWORD')
+db.auth('$MONGO_INITDB_ROOT_USERNAME', '$MONGO_INITDB_ROOT_PASSWORD')
 use lego
 db.createUser({
   user: '$MONGO_DB_USERNAME',
