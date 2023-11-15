@@ -1,0 +1,23 @@
+name: build image, push to acr
+on: [push]
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout 代码
+      - uses: actions/checkout@v2
+      - run: touch .env
+      - run: echo ALC_ACCESS_KEY=${{ secrets.ALC_ACCESS_KEY }} >> .env
+      - run: echo ALC_ACCESS_KEY=${{ secrets.ALC_SECRET_KEY }} >> .env
+      # 登录 aliyun 的 acr
+      - name: Login to Aliyun Container Registry (ACR)
+        uses: aliyun/acr-login@v1
+        with:
+          - login-server: https://registry.cn-beijing.aliyuncs.com
+          - region-id: cn-beijing
+          - access-key-id: "${{ secrets.ACR_USERNAME }}"
+          - access-key-secret: "${{ secrets.ACR_PASSWORD }}"
+      - name: Build image for Docker
+        run: docker build --tag registry.cn-beijing.aliyuncs.com/shuntian/lego:0.0.2 .
+      - name: Push image to ACR
+        run: docker push registry.cn-beijing.aliyuncs.com/shuntian/lego:0.0.2
