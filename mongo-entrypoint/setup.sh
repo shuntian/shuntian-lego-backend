@@ -25,6 +25,6 @@ db.works.insertMany([{
   copiedCount: 123,
   isHot: true,
   isTemplate: true,
-  createdAt: '2022-11-23T09:02:13/000Z',
+  createdAt: '2022-11-23T09:02:13:000Z',
 }])
 EOF
