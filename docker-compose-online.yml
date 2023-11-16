@@ -24,9 +24,6 @@ services:
     depends_on:
       - lego-mongo
       - lego-redis
-    build:
-      context: . # 当前目录
-      dockerfile: Dockerfile
     image: registry.cn-beijing.aliyuncs.com/shuntian/lego:0.0.1
     container_name: lego-backend-online
     ports: 
