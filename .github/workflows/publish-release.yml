@@ -17,12 +17,17 @@ jobs:
           region-id: cn-beijing
           username: "${{ secrets.ACR_USERNAME }}"
           password: "${{ secrets.ACR_PASSWORD }}"
+      - name: 'test github context info'
+        run:
+          echo ${{github.ref}}
+          echo ${{github.ref_name}}
+          echo ${{github.sha}}
       # 使用正确的 github tag 对应 的 ACR tag 进行 docker build
       - name: Build image for Docker
-        run: docker build --tag registry.cn-beijing.aliyuncs.com/shuntian/lego:{{github.ref_name}} .
+        run: docker build --tag "registry.cn-beijing.aliyuncs.com/shuntian/lego:${{github.ref_name}}" .
       # 使用标记的 tag 进行 push
       - name: Push image to ACR
-        run: docker push registry.cn-beijing.aliyuncs.com/shuntian/lego:{{github.ref_name}}
+        run: docker push "registry.cn-beijing.aliyuncs.com/shuntian/lego:${{github.ref_name}}"
       # 创建 env
       - name: 'create env file'
         run: |
