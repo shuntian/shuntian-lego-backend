@@ -1,0 +1,85 @@
+name: 自动部署新版本到服务器
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout 代码
+      - uses: actions/checkout@v2
+      # 使用阿里云 ACR 完成 docker login
+      - name: Login to Aliyun Container Registry (ACR)
+        uses: aliyun/acr-login@v1
+        with:
+          login-server: https://registry.cn-beijing.aliyuncs.com
+          region-id: cn-beijing
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      # 使用正确的 github tag 对应 的 ACR tag 进行 docker build
+      - name: Build image for Docker
+        run: docker build --tag registry.cn-beijing.aliyuncs.com/shuntian/lego:{{github.ref_name}} .
+      # 使用标记的 tag 进行 push
+      - name: Push image to ACR
+        run: docker push registry.cn-beijing.aliyuncs.com/shuntian/lego:{{github.ref_name}}
+      # 创建 env
+      - name: 'create env file'
+        run: |
+          touch .env
+          echo ALC_ACCESS_KEY=${{ secrets.ALC_ACCESS_KEY }} >> .env
+          echo ALC_ACCESS_KEY=${{ secrets.ALC_SECRET_KEY }} >> .env
+          echo GITHUB_CLIENT_CID=${{ secrets.GIT_CLIENT_CID }} >> .env
+          echo GITHUB_CLIENT_SECRET=${{ secrets.GIT_CLIENT_SECRETS }} >> .env
+          echo GITHUB_AUTHORIZE_URL=${{ secrets.GIT_AUTHORIZE_URL }} >> .env
+          echo GITHUB_REDIRECT_URL=${{ secrets.GIT_REDIRECT_URL }} >> .env
+          echo GITHUB_ACCESS_TOKEN_URL=${{ secrets.GIT_ACCESS_TOKEN_URL }} >> .env
+          echo GITHUB_USER_INFO_URL=${{ secrets.GIT_USER_INFO_URL }} >> .env
+          echo MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} >> .env
+          echo MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} >> .env
+          echo MONGO_DB_USERNAME=${{ secrets.MONGO_DB_USERNAME }} >> .env
+          echo MONGO_DB_PASSWORD=${{ secrets.MONGO_DB_PASSWORD }} >> .env
+          echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> .env
+      # 更新 docker-compose-online.yml 使用的版本
+      - name: Update docker-compose-online.yml
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "{{tag}}"
+          replace: ${{github.ref_name}}
+          include: "docker-compose-online.yml"
+      - run: cat docker-compose-online.yml
+      # copy 文件到一个文件夹, 包含 .env, docker-compose-online.yml, mongo-entrypoint
+      - name: 'copy necessary files into one folder'
+        run: |
+          mkdir lego-backend
+          cp .env docker-compose-online.yml lego-backend
+          cp -r mongo-entrypoint lego-backend
+          ls -a lego-backend
+      # 通过 scp 复制内容到 服务器
+      - name: 'copy lego-backend folder via scp'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: 'lego-backend'
+          target: '~'
+      # 通过 ssh 登录然后重启服务
+      - name: executing ssh and restart docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          # 登录 阿里云 acr
+          # 停止服务 docker-compose down
+          # 启动服务 docker-compose up
+          # 清理工作
+          script: |
+            docker login --username=${{secrets.ACR_USERNAME}} --password=${{secrets.ACR_PASSWORD}} registry.cn-beijing.aliyuncs.com
+            cd ~/lego-backend
+            docker-compose -f docker-compose-online.yml down
+            docker-compose -f docker-compose-online.yml up -d
+            rm -rf .env
+            docker logout registry.cn-beijing.aliyuncs.com
