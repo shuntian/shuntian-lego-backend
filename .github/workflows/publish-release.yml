@@ -86,5 +86,5 @@ jobs:
             cd ~/lego-backend
             docker-compose -f docker-compose-online.yml down
             docker-compose -f docker-compose-online.yml up -d
+            rm -rf .env
             docker logout registry.cn-beijing.aliyuncs.com
-          # rm -rf .env
