@@ -4,7 +4,7 @@ services:
     image: mongo:latest
     container_name: lego-mongo
     volumes:
-      - '/Users/shuntian/workspace/shanshui-lego-backend/.docker-volumes/mongo/data:/data/db'
+      - '.docker-volumes/mongo/data:/data/db'
       - '$PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/'
     ports:
       - 27018:27017
