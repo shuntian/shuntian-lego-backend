@@ -74,7 +74,7 @@ module.exports = appInfo => {
 
   const githubOauthConfig = {
     cid: process.env.GITHUB_CLIENT_CID,
-    secret: process.env.GITHUB_CLIENT_SECRETS,
+    secret: process.env.GITHUB_CLIENT_SECRET,
     authURL: process.env.GITHUB_AUTHORIZE_URL,
     redirectURL: process.env.GITHUB_REDIRECT_URL,
     accessTokenURL: process.env.GITHUB_ACCESS_TOKEN_URL,
