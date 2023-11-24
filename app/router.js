@@ -27,5 +27,5 @@ module.exports = app => {
   router.delete('/works/:id', jwt, controller.work.deleteWork);
 
   // utils
-  router.post('/utils/uploader', jwt, controller.utils.uploadMultipart);
+  router.post('/utils/uploader', controller.utils.uploadMultipart);
 };
